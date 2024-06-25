@@ -18,6 +18,18 @@ const create = [
   check('name').exists().isString().isLength({ min: 1, max: 255 }).trim(),
   check('description').optional({ checkNull: true, checkFalsy: true }).isString().isLength({ min: 1 }).trim(),
   check('price').exists().isFloat({ min: 0 }).toFloat(),
+  check('visibleUntil').optional().isDate().toDate(),
+  check('visibleUntil').custom((value, { req }) => {
+    const currentDate = new Date()
+    if (value && value < currentDate) {
+      return Promise.reject(new Error('The visibility must finish after the current date.'))
+    } else { return Promise.resolve() }
+  }),
+  check('availability').custom((value, { req }) => {
+    if (value === false && req.body.visibleUntil) {
+      return Promise.reject(new Error('Cannot set the availability and visibility at the same time.'))
+    } else { return Promise.resolve() }
+  }),
   check('order').default(null).optional({ nullable: true }).isInt().toInt(),
   check('availability').optional().isBoolean().toBoolean(),
   check('productCategoryId').exists().isInt({ min: 1 }).toInt(),

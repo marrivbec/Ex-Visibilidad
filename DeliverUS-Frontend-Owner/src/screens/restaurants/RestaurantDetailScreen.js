@@ -20,6 +20,19 @@ export default function RestaurantDetailScreen ({ navigation, route }) {
     fetchRestaurantDetail()
   }, [route])
 
+  const isAboutToBeInvisible = (deadline) => {
+    console.log(deadline)
+    console.log(typeof (deadline))
+    const currentDate = new Date()
+    const deadlineDate = new Date(deadline)
+
+    const timeDiff = deadlineDate.getTime() - currentDate.getTime()
+
+    const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24))
+
+    return daysLeft <= 7
+  }
+
   const renderHeader = () => {
     return (
       <View>
@@ -65,6 +78,10 @@ export default function RestaurantDetailScreen ({ navigation, route }) {
         {!item.availability &&
           <TextRegular textStyle={styles.availability }>Not available</TextRegular>
         }
+        {item.visibleUntil && isAboutToBeInvisible(item.visibleUntil) &&
+          <TextRegular textStyle={styles.visible}>Is about to dissapear!</TextRegular>
+        }
+        <View style={styles.actionButtonsContainer}></View>
          <View style={styles.actionButtonsContainer}>
           <Pressable
             onPress={() => navigation.navigate('EditProductScreen', { id: item.id })
@@ -228,6 +245,11 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginRight: 5,
     color: GlobalStyles.brandSecondary
+  },
+  visible: {
+    textAlign: 'right',
+    marginRight: 5,
+    color: GlobalStyles.brandPrimary
   },
   actionButton: {
     borderRadius: 8,

@@ -18,6 +18,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DOUBLE
       },
+      visibleUntil: {
+        type: Sequelize.DATE
+      },
       image: {
         type: Sequelize.STRING
       },
